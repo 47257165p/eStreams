@@ -2,6 +2,7 @@ package tv.estreams.estreams;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,12 +33,24 @@ public class TwitchController extends AsyncTask {
     private String game = "League%20of%20Legends";
     private final String TWITCH_BASE_URL = "https://api.twitch.tv/kraken/";
     private final Context context;
+    public Streams streamArray;
 
 
 
     //Objeto que nos crea el retrofit con la URL base y llama al a interfaz para rellenar con las preferencias deseadas.
     public TwitchController(final Context context) {
         this.context = context;
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(TWITCH_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        service = retrofit.create(TwitchService.class);
+    }
+    public TwitchController(final Context context, String game) {
+        this.context = context;
+        this.game = game;
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(TWITCH_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -46,30 +59,29 @@ public class TwitchController extends AsyncTask {
         service = retrofit.create(TwitchService.class);
     }
 
-    public void updatePeliculasDB() {
+    public void getInfo() {
         execute();
     }
 
     @Override
     protected Object doInBackground(Object[] params) {
-        int page = (Integer) params[0];
         Call<Streams> callTwitch = service.games(game);
 
         try {
 
             Response<Streams> responseTwitch = callTwitch.execute();
-            ArrayList<String> peliculasStrings = new ArrayList<>();
 
             if (responseTwitch.isSuccess()) {
-                Streams results = responseTwitch.body();
+                streamArray = responseTwitch.body();
 
-                for (Stream result : results.getStreams()) {
+                /*for (Stream result : results.getStreams()) {
 
                 }
+                */
             }
             else
             {
-
+                Log.w(null, "Error en la llamada premoh");
             }
         } catch (IOException e) {
             e.printStackTrace();
