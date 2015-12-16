@@ -21,6 +21,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import tv.estreams.estreams.json.Streams;
+import tv.estreams.estreams.json.TopGames;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -53,7 +54,18 @@ public class MainActivityFragment extends Fragment {
         webSettings.setLoadWithOverviewMode(true);
 
         TwitchService service = ServiceGenerator.createService(TwitchService.class);
-        service.games(game).enqueue(new Callback<Streams>() {
+        topCall(service, game);
+        gameTypesCall(service);
+
+        return rootView;
+    }
+    public static void rellenarGrid()
+    {
+
+    }
+    public void topCall(TwitchService service, String type)
+    {
+        service.games(type).enqueue(new Callback<Streams>() {
             @Override
             public void onResponse(Response<Streams> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
@@ -62,10 +74,17 @@ public class MainActivityFragment extends Fragment {
                     channel = streams.getStreams().get(0).getChannel().getName().toString();
                     textMain.setText(channel);
                     webMain.loadUrl("http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");
-                } else {
-                    try {
+
+
+                }
+                else
+                {
+                    try
+                    {
                         Log.e(null, response.errorBody().string());
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -76,7 +95,33 @@ public class MainActivityFragment extends Fragment {
                 t.printStackTrace();
             }
         });
+    }
 
-        return rootView;
+    public void gameTypesCall (TwitchService service)
+    {
+        service.topGames().enqueue(new Callback<TopGames>() {
+            @Override
+            public void onResponse(Response<TopGames> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    TopGames topGames = response.body();
+                }
+                else
+                {
+                    try
+                    {
+                        Log.e(null, response.errorBody().string());
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
     }
 }
