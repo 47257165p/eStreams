@@ -7,7 +7,7 @@ public class Stream {
 
     @SerializedName("_id")
     @Expose
-    private Integer Id;
+    private Long Id;
     @SerializedName("game")
     @Expose
     private String game;
@@ -22,7 +22,7 @@ public class Stream {
     private Integer videoHeight;
     @SerializedName("average_fps")
     @Expose
-    private Integer averageFps;
+    private Double averageFps;
     @SerializedName("delay")
     @Expose
     private Integer delay;
@@ -44,7 +44,7 @@ public class Stream {
      * @return
      *     The Id
      */
-    public Integer getId() {
+    public Long getId() {
         return Id;
     }
 
@@ -53,7 +53,7 @@ public class Stream {
      * @param Id
      *     The _id
      */
-    public void setId(Integer Id) {
+    public void setId(Long Id) {
         this.Id = Id;
     }
 
@@ -134,7 +134,7 @@ public class Stream {
      * @return
      *     The averageFps
      */
-    public Integer getAverageFps() {
+    public Double getAverageFps() {
         return averageFps;
     }
 
@@ -143,7 +143,7 @@ public class Stream {
      * @param averageFps
      *     The average_fps
      */
-    public void setAverageFps(Integer averageFps) {
+    public void setAverageFps(Double averageFps) {
         this.averageFps = averageFps;
     }
 

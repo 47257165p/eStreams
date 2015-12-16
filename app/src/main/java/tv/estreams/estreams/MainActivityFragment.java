@@ -3,6 +3,7 @@ package tv.estreams.estreams;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,13 @@ import android.webkit.WebViewClient;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import tv.estreams.estreams.json.Streams;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -38,23 +46,37 @@ public class MainActivityFragment extends Fragment {
         gridMain = (GridView) rootView.findViewById(R.id.gridMain);
         textMain = (TextView) rootView.findViewById(R.id.textMain);
         String game = "";
-        TwitchController tc = new TwitchController(getContext(), game);
-        tc.getInfo();
-
-
-        while (tc.streamArray.)
-        {
-
-        }
-        channel = tc.streamArray.getStreams().get(0).getChannel().getName().toString();
-        textMain.setText(channel);
 
         WebSettings webSettings = webMain.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
-        //webMain.setWebChromeClient(new WebChromeClient());
-        webMain.loadUrl("http://player.twitch.tv/?channel=nightblue3&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");
+
+        TwitchService service = ServiceGenerator.createService(TwitchService.class);
+        service.games(game).enqueue(new Callback<Streams>() {
+            @Override
+            public void onResponse(Response<Streams> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    Streams streams = response.body();
+
+                    channel = streams.getStreams().get(0).getChannel().getName().toString();
+                    textMain.setText(channel);
+                    webMain.loadUrl("http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");
+                } else {
+                    try {
+                        Log.e(null, response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
         return rootView;
     }
 }
