@@ -1,25 +1,24 @@
 package tv.estreams.estreams;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import tv.estreams.estreams.json.Game;
 import tv.estreams.estreams.json.Streams;
 import tv.estreams.estreams.json.TopGames;
 
@@ -28,11 +27,13 @@ import tv.estreams.estreams.json.TopGames;
  */
 public class MainActivityFragment extends Fragment {
 
-    WebView webMain;
-    GridView gridMain;
-    TextView textMain;
-    String channel="nightblue3";
-    // https://www-cdn.jtvnw.net/swflibs/TwitchPlayer.swf?channel=lvpes&bgcolor=
+    private WebView webMain;
+    private GridView gridMain;
+    private TextView textMain;
+    private AdapterMainGrid mainAdapter;
+    private ArrayList<Game> items;
+    private String channel="";
+    private String game = "";
     //http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=4da0a05ee8919056&!channelInfo&controls
 
     public MainActivityFragment() {
@@ -46,7 +47,6 @@ public class MainActivityFragment extends Fragment {
         webMain = (WebView) rootView.findViewById(R.id.webMain);
         gridMain = (GridView) rootView.findViewById(R.id.gridMain);
         textMain = (TextView) rootView.findViewById(R.id.textMain);
-        String game = "";
 
         WebSettings webSettings = webMain.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -55,6 +55,15 @@ public class MainActivityFragment extends Fragment {
 
         TwitchService service = ServiceGenerator.createService(TwitchService.class);
         topCall(service, game);
+
+        items = new ArrayList(Arrays.asList());
+        mainAdapter = new AdapterMainGrid(
+                getContext(),
+                0,
+                items);
+
+        gridMain.setAdapter(mainAdapter);
+
         gameTypesCall(service);
 
         return rootView;
@@ -104,6 +113,11 @@ public class MainActivityFragment extends Fragment {
             public void onResponse(Response<TopGames> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     TopGames topGames = response.body();
+
+                    for (int i = 0; i < topGames.getTop().size(); i++) {
+                       items.add(topGames.getTop().get(i).getGame());
+                    }
+                    mainAdapter.addAll(items);
                 }
                 else
                 {
