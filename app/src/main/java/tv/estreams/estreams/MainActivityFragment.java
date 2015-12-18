@@ -1,5 +1,6 @@
 package tv.estreams.estreams;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -44,17 +46,18 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         //Creación de la vista del fragment.
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        webMain = (WebView) rootView.findViewById(R.id.webMain);
-        gridMain = (GridView) rootView.findViewById(R.id.gridMain);
-        textMain = (TextView) rootView.findViewById(R.id.textMain);
 
+        gridMain = (GridView) rootView.findViewById(R.id.gridMain);
+
+        /*webMain = (WebView) rootView.findViewById(R.id.webMain);
         WebSettings webSettings = webMain.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
+        topCall(service, game);
+        webMain.loadUrl("http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");*/
 
         TwitchService service = ServiceGenerator.createService(TwitchService.class);
-        topCall(service, game);
 
         items = new ArrayList(Arrays.asList());
         mainAdapter = new AdapterMainGrid(
@@ -66,12 +69,19 @@ public class MainActivityFragment extends Fragment {
 
         gameTypesCall(service);
 
+        gridMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Game game = (Game) parent.getItemAtPosition(position);
+                String gameName = game.getName();
+                Intent gameTypeIntent = new Intent(getContext(), gameTypeActivity.class);
+                gameTypeIntent.putExtra("gameName", gameName);
+                startActivity(gameTypeIntent);
+            }
+        });
         return rootView;
     }
-    public static void rellenarGrid()
-    {
 
-    }
     public void topCall(TwitchService service, String type)
     {
         service.games(type).enqueue(new Callback<Streams>() {
@@ -79,12 +89,7 @@ public class MainActivityFragment extends Fragment {
             public void onResponse(Response<Streams> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     Streams streams = response.body();
-
-                    channel = streams.getStreams().get(0).getChannel().getName().toString();
                     textMain.setText(channel);
-                    webMain.loadUrl("http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");
-
-
                 }
                 else
                 {
@@ -115,9 +120,8 @@ public class MainActivityFragment extends Fragment {
                     TopGames topGames = response.body();
 
                     for (int i = 0; i < topGames.getTop().size(); i++) {
-                       items.add(topGames.getTop().get(i).getGame());
+                        mainAdapter.add(topGames.getTop().get(i).getGame());
                     }
-                    mainAdapter.addAll(items);
                 }
                 else
                 {

@@ -38,7 +38,7 @@ public class AdapterMainGrid extends ArrayAdapter <Game>{
         TextView tV = (TextView) convertView.findViewById(R.id.tVGrid);
 
         tV.setText(game.getName());
-        posterURL=game.getBox().getMedium();
+        posterURL=game.getBox().getLarge();
 
         Picasso.with(getContext()).load(posterURL).fit().into(iV);
         return convertView;

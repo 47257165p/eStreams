@@ -2,34 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:showIn="@layout/activity_main"
     tools:context=".MainActivityFragment"
-    android:background="@android:color/black">
-
-    <WebView
-        android:layout_width="fill_parent"
-        android:layout_height="300dp"
-        android:id="@+id/webMain"
-        android:layout_below="@+id/textMain"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    android:background="@android:color/darker_gray">
 
     <GridView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/gridMain"
-        android:background="@android:color/black"
+        android:background="@android:color/darker_gray"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:numColumns="auto_fit"
-        android:columnWidth="100dp"
-        android:layout_below="@+id/webMain" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textMain"
+        android:columnWidth="150dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textColor="@android:color/white"/>
+        android:paddingRight="8dp" />
+
 </RelativeLayout>
