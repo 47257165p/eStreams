@@ -82,35 +82,6 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    public void topCall(TwitchService service, String type)
-    {
-        service.games(type).enqueue(new Callback<Streams>() {
-            @Override
-            public void onResponse(Response<Streams> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-                    Streams streams = response.body();
-                    textMain.setText(channel);
-                }
-                else
-                {
-                    try
-                    {
-                        Log.e(null, response.errorBody().string());
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-
     public void gameTypesCall (TwitchService service)
     {
         service.topGames().enqueue(new Callback<TopGames>() {
