@@ -73,7 +73,6 @@ public class AdapterListGames extends ArrayAdapter <Stream>{
             convertView = inflater.inflate(R.layout.listview_image_game_type, parent, false);
                 Stream stream = getItem(position-2);
                 posterPath = "http://static-cdn.jtvnw.net/previews-ttv/live_user_"+stream.getChannel().getName()+"-320x180.jpg";
-
                 ImageView iVList = (ImageView) convertView.findViewById(R.id.iVList);
                 TextView tVListImage1 = (TextView) convertView.findViewById(R.id.tVListImage1);
                 TextView tVListImage2 = (TextView) convertView.findViewById(R.id.tVListImage2);
