@@ -28,5 +28,7 @@ public class videoActivityFragment extends Fragment {
         webSettings.setLoadWithOverviewMode(true);
         webMain.loadUrl("http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");
         return rootView;
+
     }
+
 }

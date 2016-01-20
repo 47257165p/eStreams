@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -41,6 +44,19 @@ public class gameTypeActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_game_type, container, false);
         TwitchService service = ServiceGenerator.createService(TwitchService.class);
 
+        /*final WebView browser = (WebView)rootView.findViewById(R.id.browser);
+        browser.getSettings().setJavaScriptEnabled(true);
+
+        browser.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+
+        browser.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url)
+            {
+                browser.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+            }
+        });
+        browser.loadUrl("http://www.twitch.tv/directory/game/League%20of%20Legends/es");*/
 
         items = new ArrayList(Arrays.asList());
         mainAdapter = new AdapterListGames(
@@ -74,14 +90,10 @@ public class gameTypeActivityFragment extends Fragment {
                 if (response.isSuccess()) {
                     Streams streams = response.body();
                     mainAdapter.addAll(streams.getStreams());
-                }
-                else {
-                    try
-                    {
+                } else {
+                    try {
                         Log.e(null, response.errorBody().string());
-                    }
-                    catch (IOException e)
-                    {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -94,3 +106,15 @@ public class gameTypeActivityFragment extends Fragment {
         });
     }
 }
+/*class MyJavaScriptInterface
+{
+    @JavascriptInterface
+    @SuppressWarnings("unused")
+    public void processHTML(String html)
+    {
+        Log.v("Html", html);
+    }
+}
+http://stackoverflow.com/questions/2376471/how-do-i-get-the-web-page-contents-from-a-webview/4892013#4892013
+
+*/
