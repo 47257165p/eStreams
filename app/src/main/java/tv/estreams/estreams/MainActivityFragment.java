@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -21,7 +20,6 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import tv.estreams.estreams.json.Game;
-import tv.estreams.estreams.json.Streams;
 import tv.estreams.estreams.json.TopGames;
 
 /**
@@ -49,14 +47,6 @@ public class MainActivityFragment extends Fragment {
 
         gridMain = (GridView) rootView.findViewById(R.id.gridMain);
 
-        /*webMain = (WebView) rootView.findViewById(R.id.webMain);
-        WebSettings webSettings = webMain.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setLoadWithOverviewMode(true);
-        topCall(service, game);
-        webMain.loadUrl("http://player.twitch.tv/?channel="+channel+"&!branding&player=frontpage&deviceId=97c6511392cbf759&!channelInfo&controls");*/
-
         TwitchService service = ServiceGenerator.createService(TwitchService.class);
 
         items = new ArrayList(Arrays.asList());
@@ -82,6 +72,7 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
+    //API CALL using asyncronous retrofit
     public void gameTypesCall (TwitchService service)
     {
         service.topGames().enqueue(new Callback<TopGames>() {
@@ -109,7 +100,7 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onFailure(Throwable t) {
-
+                Log.d("Error", t.getMessage());
             }
         });
     }

@@ -7,11 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -21,7 +17,7 @@ import java.util.Arrays;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import tv.estreams.estreams.json.Game;
+import tv.estreams.estreams.json.Channel;
 import tv.estreams.estreams.json.Stream;
 import tv.estreams.estreams.json.Streams;
 
@@ -42,21 +38,7 @@ public class gameTypeActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_game_type, container, false);
-        TwitchService service = ServiceGenerator.createService(TwitchService.class);
-
-        /*final WebView browser = (WebView)rootView.findViewById(R.id.browser);
-        browser.getSettings().setJavaScriptEnabled(true);
-
-        browser.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
-
-        browser.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url)
-            {
-                browser.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-            }
-        });
-        browser.loadUrl("http://www.twitch.tv/directory/game/League%20of%20Legends/es");*/
+        TwitchService twitchService = ServiceGenerator.createService(TwitchService.class);
 
         items = new ArrayList(Arrays.asList());
         mainAdapter = new AdapterListGames(
@@ -66,15 +48,18 @@ public class gameTypeActivityFragment extends Fragment {
 
         lVGame = (ListView) rootView.findViewById(R.id.listGameType);
         lVGame.setAdapter(mainAdapter);
-        topCall(service, getActivity().getIntent().getExtras().getString("gameName"));
+        topCall(twitchService, getActivity().getIntent().getExtras().getString("gameName"));
 
         lVGame.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Stream channel = (Stream) parent.getItemAtPosition(position);
-                String channelName = channel.getChannel().getName();
+                Channel channelName = channel.getChannel();
                 Intent gameTypeIntent = new Intent(getContext(), videoActivity.class);
-                gameTypeIntent.putExtra("channelName", channelName);
+
+                //giving extra info to the new activity, we could just create a new api call but it is much more useful
+                //to just give the object
+                gameTypeIntent.putExtra("channel", channelName);
                 startActivity(gameTypeIntent);
             }
         });
@@ -82,18 +67,26 @@ public class gameTypeActivityFragment extends Fragment {
         return rootView;
     }
 
+    //API CALL using asyncronous retrofit retrieving the type of game we want
     public void topCall(TwitchService service, String type)
     {
-        service.games(type).enqueue(new Callback<Streams>() {
+        service.games(type).enqueue(new Callback<Streams>()
+        {
             @Override
             public void onResponse(Response<Streams> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
+                if (response.isSuccess())
+                {
                     Streams streams = response.body();
                     mainAdapter.addAll(streams.getStreams());
-                } else {
-                    try {
+                }
+                else
+                {
+                    try
+                    {
                         Log.e(null, response.errorBody().string());
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -101,20 +94,8 @@ public class gameTypeActivityFragment extends Fragment {
 
             @Override
             public void onFailure(Throwable t) {
-                t.printStackTrace();
+                Log.d("Error", t.getMessage());
             }
         });
     }
 }
-/*class MyJavaScriptInterface
-{
-    @JavascriptInterface
-    @SuppressWarnings("unused")
-    public void processHTML(String html)
-    {
-        Log.v("Html", html);
-    }
-}
-http://stackoverflow.com/questions/2376471/how-do-i-get-the-web-page-contents-from-a-webview/4892013#4892013
-
-*/

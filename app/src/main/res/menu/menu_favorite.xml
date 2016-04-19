@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".videoActivity">
+    tools:context="tv.estreams.estreams.FavoriteActivity">
     <item
         android:id="@+id/action_deleteDB"
         android:orderInCategory="100"

@@ -1,13 +1,14 @@
 package tv.estreams.estreams;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +35,35 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_deleteDB) {
+
+            //reference de database and, if it exists, delete it
+            File dbFile = getDatabasePath("database");
+            if (dbFile.exists())
+            {
+                dbFile.delete();
+                Toast.makeText(this, "Deleted Database.", Toast.LENGTH_SHORT).show();
+            }
+            //if it does not exist it tells that database does not exists
+            else
+            {
+                Toast.makeText(this, "Database does not exists.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+        //next code opens database and shows its content by another fragment called FavoriteActivityFragment
+        if (id == R.id.action_favorite) {
+            File dbFile = getDatabasePath("database");
+            if (dbFile.exists())
+            {
+                Intent favoriteIntent = new Intent(this, FavoriteActivity.class);
+                startActivity(favoriteIntent);
+            }
+            //if db does not exists just tells that db is empty
+            else
+            {
+                Toast.makeText(this, "Database is empty.", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 
